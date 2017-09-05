@@ -5,7 +5,7 @@
 <meta keywords="Computer Architecture,Computer Systems,DIKU,Number Representations,talrepresentationer,CompSys"/>
 <style>
 @media print {
-  #config, #problem, #answer, .help, #compability {
+  #config, #problem, #answer, .help, #compability, .config {
     display:none;
   }
 }
@@ -35,8 +35,12 @@ thead {
 .github {
   padding-top:1em;
 }
-#config {
+#config, .config {
   margin:30px 0 0 0;
+  font-size:14px;
+}
+#config select, .config input {
+  font-size:14px;
 }
 #problem {
   margin: 0 0 30px 0;
@@ -57,7 +61,8 @@ thead {
   margin: 30px 0 30px 0;
 }
 #complement {
-  margin: 15px 0 0 0;
+  margin: 0 0.5em 0 0.5em;
+  font-size: 14px;
 }
 </style>
 <title>Integer Game</title>
@@ -91,7 +96,7 @@ thead {
     <option value="32">32 (expert)</option>
   </select>
 </div>
-<div>
+<div class="config">
   <input type="checkbox" id="complement" onchange="generate()">Use two's complement arithmetic</input>
 </div>
 <div class="help">
