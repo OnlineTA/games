@@ -137,6 +137,11 @@ var LEVELS = [
 var levelIdx = 0;
 var progress = 0;
 
+var elem_complement = byId("complement")
+var elem_n_bits = byId("bits")
+var elem_from_base = byId("from_base")
+var elem_to_base = byId("to_base")
+
 function nextLevel() {
   levelIdx += 1;
 
@@ -146,13 +151,29 @@ function nextLevel() {
 
   var curLevel = LEVELS[levelIdx];
 
-  byId("complement").checked = curLevel[1];
-  byId("bits").selectedIndex = curLevel[2];
-  byId("from_base").selectedIndex = curLevel[3];
-  byId("to_base").selectedIndex = curLevel[4];
+  elem_complement.checked = curLevel[1];
+  elem_n_bits.selectedIndex = curLevel[2];
+  elem_from_base.selectedIndex = curLevel[3];
+  elem_to_base.selectedIndex = curLevel[4];
 
   progress = 0;
   generate();
+}
+
+function serialize() {
+  return [
+      elem_complement.checked.toString(),
+      elem_n_bits.selectedIndex.toString(),
+      elem_from_base.selectedIndex.toString(),
+      elem_to_base.selectedIndex.toString()
+    ];
+}
+
+function deserialize(data) {
+  elem_complement.checked = parseInt(data[0], 10);
+  elem_n_bits.selectedIndex = parseInt(data[1], 10);
+  elem_from_base.selectedIndex = parseInt(data[2], 10);
+  elem_to_base.selectedIndex = parseInt(data[3], 10);
 }
 
 function maybeNextLevel() {
@@ -237,11 +258,13 @@ function manualOverride() {
 }
 
 function generate() {
-
-  var from_base = parseInt(byId("from_base").value, 10);
-  var to_base = parseInt(byId("to_base").value, 10);
-
   number = genRand(number);
+  playRound();
+}
+
+function playRound() {
+  var from_base = parseInt(elem_from_base.value, 10);
+  var to_base = parseInt(elem_to_base.value, 10);
 
   byId("problem").innerHTML = inBase(number, from_base);
 
@@ -250,7 +273,29 @@ function generate() {
   byId("answer").value = "";
   byId("answer").focus();
 
+  data = number + "_" + serialize().join("_");
+  window.location.hash = "#" + btoa(data);
+
   updatePoints();
+}
+
+function freshStart() {
+  elem_complement.checked = 0;
+  elem_n_bits.selectedIndex = 0;
+  elem_from_base.selectedIndex = 0;
+  elem_to_base.selectedIndex = 1;
+  generate();
+}
+
+function load() {
+  var data = atob(window.location.hash.substring(1)).split("_");
+  if (data.length < 5) {
+    freshStart();
+  } else {
+    number = parseInt(data[0], 10);
+    deserialize(data.slice(1));
+    playRound();
+  }
 }
 
 function resetbg() {
@@ -308,9 +353,7 @@ function keypress(e) {
   }
 }
 
-byId("from_base").selectedIndex = 0;
-byId("to_base").selectedIndex = 1;
-generate();
+load();
 </script>
 </body>
 </html>
